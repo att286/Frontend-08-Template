@@ -1,0 +1,227 @@
+<style>
+  .cell {
+    width: 100px;
+    height: 100px;
+    background-color: lightskyblue;
+    display: inline-block;
+    border: solid white 1px;
+    vertical-align: middle;
+    line-height: 100px;
+    font-size: 50px;
+    text-align: center;
+  }
+
+  .result {
+    width: 300px;
+    height: 60px;
+    font-size: 50px;
+    line-height: 50px;
+    color: chocolate;
+    text-align: center;
+  }
+</style>
+
+<div id="board"></div>
+
+<script>
+  let rltText = document.createElement('p');
+  rltText.classList.add('result');
+  document.body.appendChild(rltText);
+  rltText.innerText = '';
+  // rltText.style.display = 'none'
+
+  //棋盘数据
+  let pattern = [
+    0, 0, 0,
+    0, 0, 0,
+    0, 0, 0
+  ];
+
+  let inited = false;
+  let over = false;
+  let color = 1;
+
+  //根据数据还原棋盘
+  function show() {
+    let board = document.getElementById('board')
+
+    // board.innerHTML = '';
+
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        let id = '' + i + j;
+        let cell;
+        //优化，不用每次都重新创建整个棋盘
+        cell = document.getElementById(id);
+        if (!cell) {
+          cell = document.createElement('div');
+          cell.id = id;
+          cell.classList.add('cell');
+          cell.addEventListener('click', () => userMove(j, i));
+          board.appendChild(cell);
+        }
+        cell.innerText =
+          2 == pattern[i * 3 + j] ? '❌' :
+            1 == pattern[i * 3 + j] ? '⭕️' : '';
+      }
+      if (!inited) board.appendChild(document.createElement('br'));
+    }
+  }
+
+  //下棋
+  function userMove(x, y) {
+    if (over) return;
+    pattern[y * 3 + x] = color;
+    afterMove();
+    computerMove();
+  }
+
+  //AI下棋
+  function computerMove() {
+    if (over) return;
+    let choice = bestChioce(pattern, color);
+    if (choice.point) {
+      pattern[choice.point[1] * 3 + choice.point[0]] = color;
+    }
+    afterMove();
+  }
+
+  //落子后的处理
+  function afterMove() {
+    if (check(pattern, color)) {
+      rltText.innerText = 2 == color ? '❌ is winner!' : '⭕️ is winner!';
+      over = true;
+    }
+    if(draw()){
+      rltText.innerText = 'Game is draw!';
+      over = true;
+    }
+    color = 3 - color;
+    console.log(bestChioce(pattern, color));
+    show();
+    if (over) return;
+    if (willWin(pattern, color)) {
+      rltText.innerText = 2 == color ? '❌ will win!' : '⭕️ will win!';
+    } else {
+      rltText.innerText = '';
+    }
+  }
+
+
+  //检测胜利
+  function check(pattern, color) {
+    //检测横向
+    for (let i = 0; i < 3; i++) {
+      let win = true;
+      for (let j = 0; j < 3; j++) {
+        if (pattern[i * 3 + j] != color) {
+          win = false;
+          break;
+        }
+      }
+      if (win) return true;
+    }
+    //检测纵向
+    for (let i = 0; i < 3; i++) {
+      let win = true;
+      for (let j = 0; j < 3; j++) {
+        if (pattern[j * 3 + i] != color) {
+          win = false;
+          break;
+        }
+      }
+      if (win) return true;
+    }
+    //检测斜向/
+    {
+      let win = true;
+      for (let j = 0; j < 3; j++) {
+        if (pattern[j * 3 + 2 - j] != color) {
+          win = false;
+          break;
+        }
+      }
+      if (win) return true;
+    }
+    //检测斜向\
+    {
+      let win = true;
+      for (let j = 0; j < 3; j++) {
+        if (pattern[j * 3 + j] != color) {
+          win = false;
+          break;
+        }
+      }
+      if (win) return true;
+    }
+    return false;
+  }
+
+  //平局检测
+  function draw() {
+    return !pattern.some(item => 0 == item)
+  }
+
+  //克隆数据
+  function clone(obj) {
+    return Object.create(obj);
+  }
+
+  //找出可以胜利的棋
+  function willWin(pattern, color) {
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        if (pattern[i * 3 + j]) {
+          continue;
+        }
+        let tmp = clone(pattern);
+        tmp[i * 3 + j] = color;
+        if (check(tmp, color)) {
+          return [j, i];
+        }
+      }
+    }
+    return null;
+  }
+
+  //AI思考要下的棋 返回值中result：1胜，0和，-1输
+  function bestChioce(pattern, color) {
+    let p;
+    if (p = willWin(pattern, color)) {
+      return {
+        point: p,
+        result: 1
+      }
+    }
+    let result = -2;
+    let point = null;
+    outer: for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        if (pattern[i * 3 + j]) {
+          continue;
+        }
+        let tmp = clone(pattern);
+        tmp[i * 3 + j] = color;
+        let r = bestChioce(tmp, 3 - color).result;
+
+        if (-r > result) {
+          result = -r;
+          point = [j, i];
+        }
+
+        if (1 == result) {
+          break outer;
+        }
+      }
+    }
+    return {
+      point: point,
+      result: point ? result : 0
+    }
+  }
+
+  show();
+  inited = true;
+  console.log(bestChioce(pattern, color));
+
+</script>

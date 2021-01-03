@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <style type="text/css">
+    .cell {
+      display: inline-block;
+      /* line-height: 7px; */
+      width: 6px;
+      height: 6px;
+      background-color: lightgray;
+      border-bottom: solid 1px white;
+      border-right: solid 1px white;
+      /* middle也行，查询该属性具体作用 */
+      vertical-align: top;
+    }
+
+    .button {
+      display: inline;
+      margin-top: 10px;
+    }
+
+    #container {
+      /* font-size: 0; */
+      line-height: 0;
+      width: 701px;
+    }
+  </style>
+  <title>寻路算法</title>
+</head>
+
+<body>
+  <div id='container'></div>
+  <button class="button" onclick="localStorage['map'] = JSON.stringify(map)">save</button>
+  <button class="button" onclick="localStorage['map'] = ''">clear</button>
+</body>
+
+<script>
+  //地图宽
+  let mapW = 100;
+  //地图高
+  let mapH = 100;
+  //鼠标按下
+  let mousedown = false;
+  //清除模式
+  let clear = false;
+  //map元素取值: 初始化为0，有墙为1，检测过为2
+  let map = localStorage['map'] ? JSON.parse(localStorage['map']) : Array(mapW * mapH).fill(0);
+  //根据数据绘制地图
+  let container = document.getElementById('container');
+  for (let y = 0; y < mapH; y++) {
+    for (let x = 0; x < mapW; x++) {
+      let cell = document.createElement('div');
+      cell.classList.add('cell');
+      let index = y * mapH + x;
+      cell.id = 'div' + index;
+      if (1 == map[index]) {
+        cell.style.backgroundColor = 'black';
+      }
+      //监听鼠标按下后的移动操作，左键标记地图，右键清除地图
+      cell.addEventListener('mousemove', () => {
+        if (mousedown) {
+          if (clear) {
+            cell.style.backgroundColor = '';
+            map[index] = 0;
+          } else {
+            cell.style.backgroundColor = 'black';
+            map[index] = 1;
+          }
+        }
+      })
+      container.appendChild(cell);
+    }
+  }
+  //鼠标按下
+  document.addEventListener('mousedown', e => {
+    mousedown = true;
+    clear = 3 == e.which;
+  });
+  //鼠标抬起
+  document.addEventListener('mouseup', () => mousedown = false);
+  //屏蔽右键菜单
+  document.addEventListener('contextmenu', e => e.preventDefault());
+
+  function sleep(t) {
+    return new Promise(resolve => {
+      setTimeout(resolve, t);
+    })
+  }
+
+  //寻路算法 广度优先
+  async function path(map, start, end) {
+    let table = Object.create(map);
+    var queue = [start];
+
+    async function insert(x, y, pre) {
+      //越界检测
+      if (x < 0 || x >= mapW || y < 0 || y >= mapH) {
+        return;
+      }
+      //数据状态检测
+      let index = y * mapH + x;
+      // if (map[index]) {
+      //   return;
+      // }
+      if (table[index]) {
+        return;
+      }
+      // await sleep(10);
+      container.children[index].style.backgroundColor = 'lightGreen';
+      // map[index] = 2;
+      table[index] = pre;
+      queue.push([x, y]);
+    }
+
+    while (queue.length) {
+      let [x, y] = queue.shift();
+      console.log([x, y]);
+      if (x == end[0] && y == end[1]) {
+        let path = [];
+        while (x != start[0] || y != start[1]) {
+          path.push([x, y]);
+          let index = y * mapH + x;
+          [x, y] = table[index];
+          await sleep(10);
+          container.children[index].style.backgroundColor = 'purple';
+        }
+        return path;
+      }
+      
+      await insert(x - 1, y, [x, y]);
+      await insert(x, y - 1, [x, y]);
+      await insert(x + 1, y, [x, y]);
+      await insert(x, y + 1, [x, y]);
+
+      await insert(x - 1, y - 1, [x, y]);
+      await insert(x + 1, y - 1, [x, y]);
+      await insert(x - 1, y + 1, [x, y]);
+      await insert(x + 1, y + 1, [x, y]);
+    }
+    return null;
+  }
+</script>
+
+</html>

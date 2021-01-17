@@ -14,7 +14,7 @@ a['mySymbol'] // "Hello!"
 ```JavaScript
 let s = Symbol();
 let obj = {
-  [s]: function(art){...}
+  [s]: function(arg){...}
 };
 ojb[s](123);
 ```

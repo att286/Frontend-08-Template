@@ -2,7 +2,6 @@
 .DS_Store
 ignore.js
 Week 07/realm-.html
-Week 09/node_modules/
-Week 09/package-lock.json
+node_modules/
 Week 09/parse2.js
 Week 09/parse3.js

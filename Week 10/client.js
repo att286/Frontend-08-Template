@@ -42,8 +42,8 @@ class Request {
         parser.receive(data.toString());
         if (parser.isFinished) {
           resolve(parser.response);
-          connection.end();
         }
+        connection.end();
       });
       connection.on('error', err => {
         // console.log('=== on error:', err);
@@ -221,7 +221,7 @@ void async function () {
   let dom = parser.parseHTML(response.body);
   console.log('>>>>>> dom: ', dom);
   let viewport = images(800, 600);
-  render(viewport, dom.children[2].children[3]);
+  render(viewport, dom);
   viewport.save('viewport.jpg');
   console.log('--- end ---')
 }();

@@ -35,7 +35,7 @@ function match(element, selector) {
       return true;
     }
   }
-  return false;
+  // return false;
 }
 function specificity(selector) {
   let p = [0, 0, 0, 0];
@@ -97,8 +97,11 @@ function computeCSS(element) {
           computedStyle[declaration.property].value = declaration.value;
           computedStyle[declaration.property].specificity = sp;
         } else if (compare(computedStyle[declaration.property].specificity, sp) < 0) {
-          computedStyle[declaration.property].value = declaration.value;
-          computedStyle[declaration.property].specificity = sp;
+          // computedStyle[declaration.property].value = declaration.value;
+          // computedStyle[declaration.property].specificity = sp;
+          for (let k = 0; k < 4; k++) {
+            computedStyle[declaration.property][declaration.value][k] += sp[k];
+          }
         }
       }
       // console.log(element.computedStyle);
@@ -107,13 +110,13 @@ function computeCSS(element) {
 }
 
 function emit(token) {
-  console.log('token: ', token);
+  console.log('token: ', JSON.stringify(token));
   let top = stack[stack.length - 1];
   if (token.type === 'startTag') {
     let element = { type: 'element', children: [], attributes: [] };
     element.tagName = token.tagName;
     for (let p in token) {
-      if (p !== 'type' && p !== 'tagName') {
+      if (p !== 'type' || p !== 'tagName') {
         element.attributes.push({ name: p, value: token[p] });
       }
     }
@@ -131,9 +134,9 @@ function emit(token) {
       if (top.tagName === 'style') {
         addCSSRules(top.children[0].content);
       }
-      layout(top);
       stack.pop();
     }
+    layout(top);
     currentTextNode = null;
   } else if (token.type === 'text') {
     if (currentTextNode === null) {
@@ -164,6 +167,7 @@ function tagOpen(c) {
     currentToken = { type: 'startTag', tagName: '' };
     return tagName(c);
   } else {
+    emit({ type: 'text', content: c });
     return;
   }
 }
@@ -193,6 +197,7 @@ function tagName(c) {
     emit(currentToken);
     return data;
   } else {
+    currentToken.tagName += c;
     return tagName;
   }
 }
@@ -232,7 +237,7 @@ function beforeAttributeValue(c) {
   } else if (c === '\'') {
     return singleQuotedAttributeValue;
   } else if (c === '>') {
-
+    return data;
   } else {
     return UnquotedAttributeValue(c);
   }
@@ -341,6 +346,7 @@ module.exports.parseHTML = function parseHTML(html) {
   // console.log('html: ', html);
   let state = data;
   for (let c of html) {
+    if (c == '\n') continue;
     state = state(c);
   }
   state = state(EOF);

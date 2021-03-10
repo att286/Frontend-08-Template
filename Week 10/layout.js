@@ -11,6 +11,14 @@ function getStyle(element) {
     if (element.style[prop].toString().match(/^[0-9\.]+$/)) {
       element.style[prop] = parseInt(element.style[prop]);
     }
+    //
+    let newProp = prop.replace(/\-([a-z])/, (match, $1) => {
+      return $1.toUpperCase()
+    })
+    if (newProp) {
+      element.style[newProp] = element.style[prop]
+    }
+    //
   }
   return element.style;
 }
@@ -169,7 +177,7 @@ function layout(element) {
       currentMain = itemStyle[mainEnd];
     }
   } else {
-    //process each flex lin
+    //process each flex line
     flexLines.forEach(items => {
       let mainSpace = items.mainSpace;
       let flexTotal = 0;
@@ -188,7 +196,7 @@ function layout(element) {
           let item = items[i];
           let itemStyle = getStyle(item);
           if (itemStyle.flex) {
-            itemStyle[mainSize] = mainSpace * (itemStyle.flex / flexTotal);
+            itemStyle[mainSize] = mainSpace / flexTotal * itemStyle.flex;
           }
           itemStyle[mainStart] = currentMain;
           itemStyle[mainEnd] = itemStyle[mainStart] + mainSign * itemStyle[mainSize];

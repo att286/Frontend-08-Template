@@ -111,7 +111,6 @@
     - 盒模型系列：margin/padding/border
   5. 思考：为什么first-letter可以设置display:block/float之类，而first-line不行？
   >  - 因为first-line选中的第一行是【已经排版之后】的第一行，即使设置diaplay:block/float之类的属性也不会生效。
-  <span style="color:red;">这是比font标签更好的方式。可以试试。</span>
   6. 作业：编写一个 match 函数。它接收两个参数，第一个参数是一个选择器字符串性质，第二个是一个 HTML 元素。这个元素你可以认为它一定会在一棵 DOM 树里面。通过选择器和 DOM 元素来判断，当前的元素是否能够匹配到我们的选择器。（不能使用任何内置的浏览器的函数，仅通过 DOM 的 parent 和 children 这些 API，来判断一个元素是否能够跟一个选择器相匹配。）以下是一个调用的例子。
   ``` JavaScript
     function match(selector, element){

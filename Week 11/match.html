@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <style type="text/css">
+  </style>
+  <title>Selector Match</title>
+</head>
+
+<body>
+  <div id='div1' class="class1 c1">
+    <div id="div2" class="class2 c2"></div>
+  </div>
+  <!-- 逻辑代码 -->
+  <script>
+    // 对单个dom进行selector检测
+    function matchNode(selector, element) {
+      let tagReg = /^([a-zA-Z0-9]+)/g
+      let idReg = /(\#[_\-a-zA-Z0-9]+)/g
+      let classReg = /(\.[_\-a-zA-Z0-9]+)/g
+      let tagRes = selector.match(tagReg)
+      let idRes = selector.match(idReg)
+      let classRes = selector.match(classReg)
+      // 判断是否匹配tag
+      if (tagRes) {
+        if (element.tagName.toLowerCase() !== tagRes[0]) {
+          return false
+        }
+      }
+      // 判断是否匹配id
+      if (idRes) {
+        if ('#' + element.id != idRes[0]) {
+          return false
+        }
+      }
+      // 判断是否匹配classList
+      if (classRes) {
+        let classList = element.classList
+        for (let source of classRes) {
+          let find = false
+          for (let aim of classList) {
+            if ('.' + aim === source) {
+              find = true
+              break
+            }
+          }
+          if (!find) return false
+        }
+      }
+      return true;
+    }
+    // 判断element是否匹配selector
+    function match(selector, element) {
+      // 通过空格划分检测层级，从后往前检测
+      let selectors = selector.split(' ')
+      // 先检测最后一个selector
+      let s = selectors.pop()
+      // 最后一个selector和当前element匹配
+      if (matchNode(s, element)) {
+        // 如果没有更多selector需要检测，则返回true
+        if (!selectors.length) return true
+        // 如果还有其他selector，则检测当前element的父节点是否匹配下一个selector
+        return match(selectors.join(' '), element.parentNode)
+      }
+      return false
+    }
+    let div1 = document.getElementById('div1')
+    let div2 = document.getElementById('div2')
+    let selector = 'div#div1.class1.c1 div#div2.class2.c2'
+    console.log(match(selector, div2))
+  </script>
+</body>
+
+
+</html>

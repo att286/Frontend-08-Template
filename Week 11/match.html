@@ -48,11 +48,11 @@
           if (!find) return false
         }
       }
-      return true;
+      return true
     }
     // 判断element是否匹配selector
     function match(selector, element) {
-      // 通过空格划分检测层级，从后往前检测
+      // 有空格则说明有父子选择器。先检测最后一个选择器和当前元素是否匹配。然后selector从后往前，element逐级往上进行一对一检测
       let selectors = selector.split(' ')
       // 先检测最后一个selector
       let s = selectors.pop()

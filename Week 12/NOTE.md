@@ -127,4 +127,4 @@
   - data:image/svg+xml...
 
 ### 练习
-  - 在CSS脑图上对CSS的属性进行分类，最好能分到layout和render的下一层
+  - 在CSS脑图上对CSS的属性进行分类，最好能分到layout和render的下一层。

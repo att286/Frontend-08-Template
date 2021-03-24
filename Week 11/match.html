@@ -10,7 +10,9 @@
 
 <body>
   <div id='div1' class="class1 c1">
-    <div id="div2" class="class2 c2"></div>
+    <div id="div2" class="class2 c2">
+      <div id="div3" class="class3 c3"></div>
+    </div>
   </div>
   <!-- 逻辑代码 -->
   <script>
@@ -24,7 +26,7 @@
       let classRes = selector.match(classReg)
       // 判断是否匹配tag
       if (tagRes) {
-        if (element.tagName.toLowerCase() !== tagRes[0]) {
+        if (element.tagName && element.tagName.toLowerCase() !== tagRes[0]) {
           return false
         }
       }
@@ -55,20 +57,24 @@
       // 有空格则说明有父子选择器。先检测最后一个选择器和当前元素是否匹配。然后selector从后往前，element逐级往上进行一对一检测
       let selectors = selector.split(' ')
       // 先检测最后一个selector
-      let s = selectors.pop()
+      let s = selectors[selectors.length - 1]
       // 最后一个selector和当前element匹配
       if (matchNode(s, element)) {
+        // 如果找到，则删除最后一个选择器
+        selectors.pop()
         // 如果没有更多selector需要检测，则返回true
         if (!selectors.length) return true
-        // 如果还有其他selector，则检测当前element的父节点是否匹配下一个selector
-        return match(selectors.join(' '), element.parentNode)
       }
-      return false
+      // 如果还有其他selector，并且存在父节点，则检测当前element的父节点是否匹配下一个selector
+      if (element.parentNode) return match(selectors.join(' '), element.parentNode)
+      else return false
     }
     let div1 = document.getElementById('div1')
     let div2 = document.getElementById('div2')
-    let selector = 'div#div1.class1.c1 div#div2.class2.c2'
-    console.log(match(selector, div2))
+    let div3 = document.getElementById('div3')
+    let selector = 'div#div1.class1.c1 div#div2.class2.c2 div#div3.class3.c3'
+    selector = 'div#div1.class1.c1 div#div3.class3.c3'
+    console.log(match(selector, div3))
   </script>
 </body>
 

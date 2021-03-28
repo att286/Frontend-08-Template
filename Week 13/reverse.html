@@ -1,0 +1,51 @@
+<div id="a">
+  <span>1</span>
+  <p>2</p>
+  <a href="">3</a>
+  <div>4</div>
+</div>
+
+<script>
+  let element = document.getElementById('a')
+
+  // 最差解法
+  function reverseChildren0(element) {
+    //把childNodes变成一个普通数组，解除living collection特性，不会随着insert/remove操作改变自己。
+    let children = Array.prototype.slice.call(element.childNodes)
+
+    for (let child of children) {
+      element.removeChild(child)
+    }
+    //可以替代remove操作
+    // element.innerHTML = ''
+
+    children.reverse()
+
+    for (let child of children) {
+      element.appendChild(child)
+    }
+  }
+
+  // 次优解法
+  function reverseChildren1(element) {
+    let l = element.childNodes.length
+    while (l-- > 0) {
+      element.appendChild(element.childNodes[l])
+    }
+  }
+
+  // 最优解法
+  function reverseChildren(element) {
+    let range = new Range()
+    range.selectNodeContents(element)
+
+    let fragment = range.extractContents()
+    let l = fragment.childNodes.length
+    while (l-- > 0) {
+      fragment.appendChild(fragment.childNodes[l])
+    }
+    element.appendChild(fragment)
+  }
+
+  reverseChildren(element)
+</script>

@@ -1,0 +1,13 @@
+<style title="Hello">
+  a::before {
+    color: red;
+    content: "Hello";
+  }
+</style>
+<link rel="stylesheet" href="data:text/css,p%7Bcolor:blur;%7D">
+<a href=""> world</a>
+
+<script>
+  document.styleSheets[0].cssRules[0].style.color = 'green'
+  let v = getComputedStyle(document.querySelector('a'), '::before').color
+</script>

@@ -8,7 +8,7 @@ export class Dispatcher {
   dispatch(type, properties) {
     // let event = new CustomEvent(type, {})
     let event = new Event(type)
-    console.log(event)
+    // console.log(event)
     for (let name in properties) {
       event[name] = properties[name]
     }
@@ -145,7 +145,7 @@ export class Recognizer {
       clearTimeout(context.handler)
     }
     if (context.isPan) {
-      this.dispatcher.dispatch('pan', {
+      this.dispatcher.dispatch('panMove', {
         startX: context.startX, startY: context.startY, clientX: point.clientX, clientY: point.clientY,
         isVertical: context.isVertical
       })
@@ -157,7 +157,7 @@ export class Recognizer {
 
   end(point, context) {
     if (context.isTap) {
-      this.dispatcher.dispatchdispatch('tapEnd', {})
+      this.dispatcher.dispatch('tap', {})
       clearTimeout(context.handler)
     } else if (context.isPan) {
       context.points = context.points.filter(point => Date.now() - point.t < 500)
@@ -183,7 +183,7 @@ export class Recognizer {
         isVertical: context.isVertical, isFlick: context.isFlick, velocity: v
       })
     } else if (context.isPress) {
-      this.dispatcher.dispatchdispatch('pressEnd', {})
+      this.dispatcher.dispatch('pressEnd', {})
     }
     // console.log('end', point.clientX, point.clientY)
   }

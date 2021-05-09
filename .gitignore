@@ -1,8 +1,9 @@
 
 .DS_Store
 ignore.js
-Week 07/realm-.html
 node_modules/
+.nyc_output
+Week 07/realm-.html
 Week 09/parse2.js
 Week 09/parse3.js
 toy-browser

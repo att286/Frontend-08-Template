@@ -106,4 +106,36 @@ describe('parse html:', function () {
     assert.strictEqual(tree.children.length, 1);
     assert.strictEqual(tree.children[0].children.length, 0);
   });
+
+  var html14 = '<a/>';
+  it(html14, function () {
+    let tree = parseHTML(html14);
+    // console.log(tree)
+    assert.strictEqual(tree.children.length, 1);
+    assert.strictEqual(tree.children[0].children.length, 0);
+  });
+
+  var html15 = '<a id=  1/>';
+  it(html15, function () {
+    let tree = parseHTML(html15);
+    // console.log(tree)
+    assert.strictEqual(tree.children.length, 1);
+    assert.strictEqual(tree.children[0].children.length, 0);
+  });
+
+  var html16 = '<a id="1"/>';
+  it(html16, function () {
+    let tree = parseHTML(html16);
+    // console.log(tree)
+    assert.strictEqual(tree.children.length, 1);
+    assert.strictEqual(tree.children[0].children.length, 0);
+  });
+
+  var html17 = '<a id ="1"/>';
+  it(html17, function () {
+    let tree = parseHTML(html17);
+    // console.log(tree)
+    assert.strictEqual(tree.children.length, 1);
+    assert.strictEqual(tree.children[0].children.length, 0);
+  });
 })

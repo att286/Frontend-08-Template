@@ -19,6 +19,7 @@
     "babel-plugin-istanbul": "^6.0.0",
     "copy-webpack-plugin": "^8.1.1",
     "css-loader": "^5.2.4",
+    "mocha": "^8.4.0",
     "nyc": "^15.1.0",
     "vue-loader": "^15.9.6",
     "vue-style-loader": "^4.1.3",

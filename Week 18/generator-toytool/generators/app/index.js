@@ -46,7 +46,7 @@ module.exports = class extends Generator {
     this.npmInstall(['vue'], { 'save-dev': false });
     this.npmInstall([
       'webpack', 'webpack-cli', 'vue-loader', 'vue-style-loader', 'css-loader', 'vue-template-compiler', 'copy-webpack-plugin',
-      "babel-loader", "@babel/core", "@babel/preset-env", "@babel/register", "@istanbuljs/nyc-config-babel", "babel-plugin-istanbul", 'nyc'
+      "babel-loader", "@babel/core", "@babel/preset-env", "@babel/register", "@istanbuljs/nyc-config-babel", "babel-plugin-istanbul", 'mocha', 'nyc'
     ], { 'save-dev': true });
 
     this.fs.copyTpl(
